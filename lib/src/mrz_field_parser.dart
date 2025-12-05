@@ -1,4 +1,5 @@
-part of 'passport_mrz_parser.dart';
+import 'package:mrz_parser/mrz_parser.dart';
+import 'package:mrz_parser/src/mrz_string_extensions.dart';
 
 class MrzFieldParser {
   MrzFieldParser._();

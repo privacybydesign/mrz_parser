@@ -1,35 +1,58 @@
 import 'package:mrz_parser/mrz_parser.dart';
+import 'package:mrz_parser/src/travel_document_mrz_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  void expectResult({
+  void expectResultPassport({
     List<String?>? input,
     PassportMrzResult? expectedOutput,
   }) =>
       expect(PassportMrzParser().parse(input), expectedOutput);
 
-  void expectException<T>({List<String?>? input}) =>
+  void expectResultTravelDocument({
+    List<String?>? input,
+    PassportMrzResult? expectedOutput,
+  }) =>
+      expect(TravelDocumentMrzParser().parse(input), expectedOutput);
+
+  void expectResultIdCard({
+    List<String?>? input,
+    PassportMrzResult? expectedOutput,
+  }) =>
+      expect(IdCardMrzParser().parse(input), expectedOutput);
+
+  void expectExceptionPassportParser<T>({List<String?>? input}) =>
       expect(() => PassportMrzParser().parse(input), throwsA(isA<T>()));
+
+  void expectExceptionIdCardParser<T>({List<String?>? input}) =>
+      expect(() => IdCardMrzParser().parse(input), throwsA(isA<T>()));
+
+  void expectExceptionTravelDocumentParser<T>({List<String?>? input}) =>
+      expect(() => TravelDocumentMrzParser().parse(input), throwsA(isA<T>()));
 
   group('invalid input throws $InvalidMrzInputException', () {
     test(
       'null input',
-      () => expectException<InvalidMrzInputException>(),
+      () => expectExceptionPassportParser<InvalidMrzInputException>(),
     );
 
     test(
       '1-line null input',
-      () => expectException<InvalidMrzInputException>(input: [null]),
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
+        input: [null],
+      ),
     );
 
     test(
       '1-line input',
-      () => expectException<InvalidMrzInputException>(input: ['0123456789']),
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
+        input: ['0123456789'],
+      ),
     );
 
     test(
       '4-lines input',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '0123456789',
           '0123456789',
@@ -40,7 +63,7 @@ void main() {
     );
     test(
       '3-lines input with 10 symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '0123456789',
           '0123456789',
@@ -51,7 +74,7 @@ void main() {
 
     test(
       '3-lines input with 40 symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '0123456789012345678901234567890123456789',
           '0123456789012345678901234567890123456789',
@@ -62,7 +85,7 @@ void main() {
 
     test(
       '2-lines input with 10 symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '0123456789',
           '0123456789',
@@ -72,7 +95,7 @@ void main() {
 
     test(
       '2-lines input with 40 symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '0123456789012345678901234567890123456789',
           '0123456789012345678901234567890123456789',
@@ -82,7 +105,7 @@ void main() {
 
     test(
       '2-lines input with 50 symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '01234567890123456789012345678901234567890123456789',
           '01234567890123456789012345678901234567890123456789',
@@ -92,7 +115,7 @@ void main() {
 
     test(
       '2-lines input with 36 invalid symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '012345678901234567890123456789!asdfg',
           '012345678901234567890123456789{}>,.?',
@@ -102,7 +125,7 @@ void main() {
 
     test(
       '2-lines input with 44 invalid symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '01234567890123456789012345678901234567!asdfg',
           '01234567890123456789012345678901234567{}>,.?',
@@ -112,7 +135,7 @@ void main() {
 
     test(
       '3-lines input with 30 invalid symbols',
-      () => expectException<InvalidMrzInputException>(
+      () => expectExceptionPassportParser<InvalidMrzInputException>(
         input: [
           '012345678901234567890123!asdfg',
           '012345678901234567890123{}>,.?',
@@ -121,10 +144,10 @@ void main() {
     );
   });
 
-  group('TD1 passport', () {
+  group('TD1 ID-cards', () {
     test(
       'correct input parses',
-      () => expectResult(
+      () => expectResultIdCard(
         input: [
           'I<SWE59000002<8198703142391<<<',
           '8703145M1701027SWE<<<<<<<<<<<8',
@@ -147,7 +170,7 @@ void main() {
     );
     test(
       'correct input with long document number (Belgian ID card from PRADO)',
-      () => expectResult(
+      () => expectResultIdCard(
         input: [
           'IDBEL600001476<9355<<<<<<<<<<<',
           '1301014F2311207UT0130101987390',
@@ -171,7 +194,7 @@ void main() {
 
     test(
       'document number check digit does not match throws $InvalidDocumentNumberException',
-      () => expectException<InvalidDocumentNumberException>(
+      () => expectExceptionIdCardParser<InvalidDocumentNumberException>(
         input: [
           'I<SWE59000002<0198703142391<<<',
           '8703145M1701027SWE<<<<<<<<<<<8',
@@ -182,7 +205,7 @@ void main() {
 
     test(
       'birth date check digit does not match throws $InvalidBirthDateException',
-      () => expectException<InvalidBirthDateException>(
+      () => expectExceptionIdCardParser<InvalidBirthDateException>(
         input: [
           'I<SWE59000002<8198703142391<<<',
           '8703140M1701027SWE<<<<<<<<<<<8',
@@ -193,7 +216,7 @@ void main() {
 
     test(
       'expiry date check digit does not match throws $InvalidExpiryDateException',
-      () => expectException<InvalidExpiryDateException>(
+      () => expectExceptionIdCardParser<InvalidExpiryDateException>(
         input: [
           'I<SWE59000002<8198703142391<<<',
           '8703145M1701020SWE<<<<<<<<<<<8',
@@ -204,7 +227,7 @@ void main() {
 
     test(
       'final check digit does not match throws $InvalidMrzValueException',
-      () => expectException<InvalidMrzValueException>(
+      () => expectExceptionIdCardParser<InvalidMrzValueException>(
         input: [
           'I<SWE59000002<8198703142391<<<',
           '8703145M1701027SWE<<<<<<<<<<<0',
@@ -217,7 +240,7 @@ void main() {
   group('TD2 passport', () {
     test(
       'correct input parses, long document number',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           'C01X00T478D<<6408125F2702283<<<<<<<4',
@@ -239,7 +262,7 @@ void main() {
 
     test(
       'correct input parses, short document number',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           'C01X00<<<6D<<6408125F2702283<<<<<<<8',
@@ -261,7 +284,7 @@ void main() {
 
     test(
       'document number check digit does not match throws $InvalidDocumentNumberException',
-      () => expectException<InvalidDocumentNumberException>(
+      () => expectExceptionTravelDocumentParser<InvalidDocumentNumberException>(
         input: [
           'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           'C01X00T470D<<6408125F2702283<<<<<<<4',
@@ -271,7 +294,7 @@ void main() {
 
     test(
       'birth date check digit does not match throws $InvalidBirthDateException',
-      () => expectException<InvalidBirthDateException>(
+      () => expectExceptionTravelDocumentParser<InvalidBirthDateException>(
         input: [
           'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           'C01X00T478D<<6408120F2702283<<<<<<<4',
@@ -281,7 +304,7 @@ void main() {
 
     test(
       'expiry date check digit does not match rthrows $InvalidExpiryDateException',
-      () => expectException<InvalidExpiryDateException>(
+      () => expectExceptionTravelDocumentParser<InvalidExpiryDateException>(
         input: [
           'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           'C01X00T478D<<6408125F2702280<<<<<<<4',
@@ -291,7 +314,7 @@ void main() {
 
     test(
       'final check digit does not match throws $InvalidMrzValueException',
-      () => expectException<InvalidMrzValueException>(
+      () => expectExceptionTravelDocumentParser<InvalidMrzValueException>(
         input: [
           'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           'C01X00T478D<<6408125F2702283<<<<<<<0',
@@ -303,7 +326,7 @@ void main() {
   group('MRV-B visa', () {
     test(
       'correct input parses',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'VCFINMEIKAELAEINEN<<MATTI<<<<<<<<<<<',
           '0005467<<2RUS7001017M1111019<M901101',
@@ -325,7 +348,7 @@ void main() {
 
     test(
       'document number check digit does not match throws $InvalidDocumentNumberException',
-      () => expectException<InvalidDocumentNumberException>(
+      () => expectExceptionTravelDocumentParser<InvalidDocumentNumberException>(
         input: [
           'VCFINMEIKAELAEINEN<<MATTI<<<<<<<<<<<',
           '0005467<<0RUS7001017M1111019<M901101',
@@ -335,7 +358,7 @@ void main() {
 
     test(
       'birth date check digit does not match throws $InvalidBirthDateException',
-      () => expectException<InvalidBirthDateException>(
+      () => expectExceptionTravelDocumentParser<InvalidBirthDateException>(
         input: [
           'VCFINMEIKAELAEINEN<<MATTI<<<<<<<<<<<',
           '0005467<<2RUS7001010M1111019<M901101',
@@ -345,7 +368,7 @@ void main() {
 
     test(
       'expiry date check digit does not match throws $InvalidExpiryDateException',
-      () => expectException<InvalidExpiryDateException>(
+      () => expectExceptionTravelDocumentParser<InvalidExpiryDateException>(
         input: [
           'VCFINMEIKAELAEINEN<<MATTI<<<<<<<<<<<',
           '0005467<<2RUS7001017M1111010<M901101',
@@ -357,7 +380,7 @@ void main() {
   group('TD3 passport', () {
     test(
       'correct input parses, long document number',
-      () => expectResult(
+      () => expectResultPassport(
         input: [
           'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'L898902C36UTO7408122F1204159ZE184226B<<<<<10',
@@ -379,7 +402,7 @@ void main() {
 
     test(
       'correct input parses, shorter document number',
-      () => expectResult(
+      () => expectResultPassport(
         input: [
           'P<AUSMCCABE<<NICOLE<SANDRA<<<<<<<<<<<<<<<<<<',
           'L4041765<4AUS8211169F1305218<<<<<<<<<<<<<<00',
@@ -401,7 +424,7 @@ void main() {
 
     test(
       'correct input parses, no optional data and no check digit',
-      () => expectResult(
+      () => expectResultPassport(
         input: [
           'I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'D231458907UTO7408122F1204159<<<<<<<<<<<<<<<6',
@@ -423,7 +446,7 @@ void main() {
 
     test(
       'document number check digit does not match throws $InvalidDocumentNumberException',
-      () => expectException<InvalidDocumentNumberException>(
+      () => expectExceptionPassportParser<InvalidDocumentNumberException>(
         input: [
           'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'L898902C37UTO7408122F1204159ZE184226B<<<<<10',
@@ -433,7 +456,7 @@ void main() {
 
     test(
       'birth date check digit does not match throws $InvalidBirthDateException',
-      () => expectException<InvalidBirthDateException>(
+      () => expectExceptionPassportParser<InvalidBirthDateException>(
         input: [
           'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'L898902C36UTO7408120F1204159ZE184226B<<<<<10',
@@ -443,7 +466,7 @@ void main() {
 
     test(
       'expiry date check digit does not match throws $InvalidExpiryDateException',
-      () => expectException<InvalidExpiryDateException>(
+      () => expectExceptionPassportParser<InvalidExpiryDateException>(
         input: [
           'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'L898902C36UTO7408122F1204150ZE184226B<<<<<10',
@@ -453,7 +476,7 @@ void main() {
 
     test(
       'personal number check digit does not match throws $InvalidOptionalDataException',
-      () => expectException<InvalidOptionalDataException>(
+      () => expectExceptionPassportParser<InvalidOptionalDataException>(
         input: [
           'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'L898902C36UTO7408122F1204159ZE184226B<<<<<00',
@@ -463,7 +486,7 @@ void main() {
 
     test(
       'final check digit does not match throws $InvalidMrzValueException',
-      () => expectException<InvalidMrzValueException>(
+      () => expectExceptionPassportParser<InvalidMrzValueException>(
         input: [
           'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
           'L898902C36UTO7408122F1204159ZE184226B<<<<<19',
@@ -475,7 +498,7 @@ void main() {
   group('MRV-A visa', () {
     test(
       'correct input parses',
-      () => expectResult(
+      () => expectResultPassport(
         input: [
           'VNUSATRAVELER<<HAPPY<<<<<<<<<<<<<<<<<<<<<<<<',
           '12345678<8KOR5001013F1304071B3SE000IL4243934',
@@ -497,7 +520,7 @@ void main() {
 
     test(
       'document number check digit does not match throws $InvalidDocumentNumberException',
-      () => expectException<InvalidDocumentNumberException>(
+      () => expectExceptionPassportParser<InvalidDocumentNumberException>(
         input: [
           'VNUSATRAVELER<<HAPPY<<<<<<<<<<<<<<<<<<<<<<<<',
           '12345678<0KOR5001013F1304071B3SE000IL4243934',
@@ -507,7 +530,7 @@ void main() {
 
     test(
       'birth date check digit does not match throws $InvalidBirthDateException',
-      () => expectException<InvalidBirthDateException>(
+      () => expectExceptionPassportParser<InvalidBirthDateException>(
         input: [
           'VNUSATRAVELER<<HAPPY<<<<<<<<<<<<<<<<<<<<<<<<',
           '12345678<8KOR5001010F1304071B3SE000IL4243934',
@@ -517,7 +540,7 @@ void main() {
 
     test(
       'expiry date check digit does not match throws $InvalidExpiryDateException',
-      () => expectException<InvalidExpiryDateException>(
+      () => expectExceptionPassportParser<InvalidExpiryDateException>(
         input: [
           'VNUSATRAVELER<<HAPPY<<<<<<<<<<<<<<<<<<<<<<<<',
           '12345678<8KOR5001013F1304070B3SE000IL4243934',
@@ -529,7 +552,7 @@ void main() {
   group('French ID', () {
     test(
       'correct input parses',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '8806923102858CORINNE<<<<<<<6512068F6',
@@ -552,7 +575,7 @@ void main() {
 
     test(
       'correct input with department and office in first line parses',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<923255',
           '8806923102858CORINNE<<<<<<<6512068F2',
@@ -575,7 +598,7 @@ void main() {
 
     test(
       'correct input with multiple names parses',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'IDFRALOISEAU<<<<<<<<<<<<<<<<<<<<<<<<',
           '970675K002774HERVE<<DJAMEL<7303216M4',
@@ -598,7 +621,7 @@ void main() {
 
     test(
       'issued before Jan 2014 valid for 10 years',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '8806923102858CORINNE<<<<<<<6512068F6',
@@ -621,7 +644,7 @@ void main() {
 
     test(
       'issued after Jan 2014 for adult valid for 15 years',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '1506923102850CORINNE<<<<<<<6512068F2',
@@ -644,7 +667,7 @@ void main() {
 
     test(
       'issued after Jan 2014 for minor valid for 10 years',
-      () => expectResult(
+      () => expectResultTravelDocument(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '1506923102850CORINNE<<<<<<<0012061F6',
@@ -667,7 +690,7 @@ void main() {
 
     test(
       'document number check digit does not match throws $InvalidDocumentNumberException',
-      () => expectException<InvalidDocumentNumberException>(
+      () => expectExceptionTravelDocumentParser<InvalidDocumentNumberException>(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '8806923102850CORINNE<<<<<<<6512068F6',
@@ -677,7 +700,7 @@ void main() {
 
     test(
       'birth date check digit does not match throws $InvalidBirthDateException',
-      () => expectException<InvalidBirthDateException>(
+      () => expectExceptionTravelDocumentParser<InvalidBirthDateException>(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '8806923102858CORINNE<<<<<<<6512060F6',
@@ -687,7 +710,7 @@ void main() {
 
     test(
       'final check digit does not match throws $InvalidMrzValueException',
-      () => expectException<InvalidMrzValueException>(
+      () => expectExceptionTravelDocumentParser<InvalidMrzValueException>(
         input: [
           'IDFRABERTHIER<<<<<<<<<<<<<<<<<<<<<<<',
           '8806923102858CORINNE<<<<<<<6512068F0',
@@ -731,7 +754,7 @@ void main() {
     // cause check digit validation failures.
     test(
       'Dutch passport with O in document number should parse correctly',
-      () => expectResult(
+      () => expectResultPassport(
         input: [
           'P<NLDDEVRIES<<JAN<<<<<<<<<<<<<<<<<<<<<<<<<<<',
           'NPOBR4N678NLD8501019M3012316<<<<<<<<<<<<<<08',
@@ -743,7 +766,7 @@ void main() {
           givenNames: 'JAN',
           documentNumber: 'NPOBR4N67',
           nationalityCountryCode: 'NLD',
-          birthDate: DateTime(1985, 01, 01),
+          birthDate: DateTime(1985),
           sex: Sex.male,
           expiryDate: DateTime(2030, 12, 31),
           personalNumber: '',
@@ -774,7 +797,7 @@ void main() {
         // This test demonstrates the missing functionality
         // The library SHOULD auto-correct '0' to 'O' in Dutch passport numbers
         // because Dutch passports never contain the digit '0'
-        expectResult(
+        expectResultPassport(
           input: [
             'P<NLDDEVRIES<<JAN<<<<<<<<<<<<<<<<<<<<<<<<<<<',
             'NP0BR4N678NLD8501019M3012316<<<<<<<<<<<<<<08',
@@ -787,7 +810,7 @@ void main() {
             documentNumber:
                 'NPOBR4N67', // Should be corrected from NP0BR4N67 to NPOBR4N67
             nationalityCountryCode: 'NLD',
-            birthDate: DateTime(1985, 01, 01),
+            birthDate: DateTime(1985),
             sex: Sex.male,
             expiryDate: DateTime(2030, 12, 31),
             personalNumber: '',
@@ -801,7 +824,7 @@ void main() {
       () {
         // Test the opposite case: O should be corrected to 0
         // Based on the standard ERIKSSON example with '0' replaced by 'O'
-        expectResult(
+        expectResultPassport(
           input: [
             'P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
             'L8989O2C36UTO7408122F1204159ZE184226B<<<<<10',

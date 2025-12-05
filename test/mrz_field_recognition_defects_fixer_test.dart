@@ -1,4 +1,4 @@
-import 'package:mrz_parser/mrz_parser.dart';
+import 'package:mrz_parser/src/mrz_field_recognition_defects_fixer.dart';
 import 'package:test/test.dart';
 
 void main() {

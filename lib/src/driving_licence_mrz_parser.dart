@@ -1,5 +1,7 @@
 import 'package:mrz_parser/mrz_parser.dart';
-import 'package:mrz_parser/src/mrz_parser.dart';
+import 'package:mrz_parser/src/mrz_checkdigit_calculator.dart';
+import 'package:mrz_parser/src/mrz_field_parser.dart';
+import 'package:mrz_parser/src/mrz_field_recognition_defects_fixer.dart';
 
 class DrivingLicenceMrzParser extends MrzParser<DrivingLicenceMrzResult> {
   static const _lineLength = 30;
@@ -89,7 +91,7 @@ class _DrivingLicenceMRZFormatParser {
         MrzFieldRecognitionDefectsFixer.fixCheckDigit(checkDigitRaw);
 
     final documentNumberIsValid = int.tryParse(checkDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(line.substring(0, 29));
+        MrzCheckDigitCalculator.getCheckDigit(line.substring(0, 29));
     if (!documentNumberIsValid) {
       throw const InvalidDocumentNumberException();
     }

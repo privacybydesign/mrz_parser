@@ -1,4 +1,4 @@
-part of 'passport_mrz_parser.dart';
+import 'package:mrz_parser/src/mrz_string_extensions.dart';
 
 class MrzFieldRecognitionDefectsFixer {
   MrzFieldRecognitionDefectsFixer._();

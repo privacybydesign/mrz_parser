@@ -1,9 +1,6 @@
 // ignore_for_file: constant_identifier_names
-
-part of 'passport_mrz_parser.dart';
-
-class MRZCheckDigitCalculator {
-  MRZCheckDigitCalculator._();
+class MrzCheckDigitCalculator {
+  MrzCheckDigitCalculator._();
 
   static final _weights = [7, 3, 1];
 

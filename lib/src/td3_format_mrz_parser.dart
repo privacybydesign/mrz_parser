@@ -1,7 +1,10 @@
-part of 'passport_mrz_parser.dart';
+import 'package:mrz_parser/mrz_parser.dart';
+import 'package:mrz_parser/src/mrz_checkdigit_calculator.dart';
+import 'package:mrz_parser/src/mrz_field_parser.dart';
+import 'package:mrz_parser/src/mrz_field_recognition_defects_fixer.dart';
 
-class _TD3MrzFormatParser {
-  _TD3MrzFormatParser._();
+class TD3MrzFormatParser {
+  TD3MrzFormatParser._();
 
   static const _linesLength = 44;
   static const _linesCount = 2;
@@ -66,7 +69,7 @@ class _TD3MrzFormatParser {
         : null;
 
     var documentNumberIsValid = int.tryParse(documentNumberCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(documentNumberFixed);
+        MrzCheckDigitCalculator.getCheckDigit(documentNumberFixed);
 
     // If check digit doesn't match, try common OCR errors: O <-> 0
     if (!documentNumberIsValid) {
@@ -75,7 +78,7 @@ class _TD3MrzFormatParser {
         final documentNumberCorrected =
             documentNumberFixed.replaceAll('O', '0');
         final correctedIsValid = int.tryParse(documentNumberCheckDigitFixed) ==
-            MRZCheckDigitCalculator.getCheckDigit(documentNumberCorrected);
+            MrzCheckDigitCalculator.getCheckDigit(documentNumberCorrected);
 
         if (correctedIsValid) {
           documentNumberFixed = documentNumberCorrected;
@@ -88,7 +91,7 @@ class _TD3MrzFormatParser {
         final documentNumberCorrected =
             documentNumberFixed.replaceAll('0', 'O');
         final correctedIsValid = int.tryParse(documentNumberCheckDigitFixed) ==
-            MRZCheckDigitCalculator.getCheckDigit(documentNumberCorrected);
+            MrzCheckDigitCalculator.getCheckDigit(documentNumberCorrected);
 
         if (correctedIsValid) {
           documentNumberFixed = documentNumberCorrected;
@@ -102,14 +105,14 @@ class _TD3MrzFormatParser {
     }
 
     final birthDateIsValid = int.tryParse(birthDateCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(birthDateFixed);
+        MrzCheckDigitCalculator.getCheckDigit(birthDateFixed);
 
     if (!birthDateIsValid) {
       throw const InvalidBirthDateException();
     }
 
     final expiryDateIsValid = int.tryParse(expiryDateCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(expiryDateFixed);
+        MrzCheckDigitCalculator.getCheckDigit(expiryDateFixed);
 
     if (!expiryDateIsValid) {
       throw const InvalidExpiryDateException();
@@ -117,7 +120,7 @@ class _TD3MrzFormatParser {
 
     if (optionalDataCheckDigitFixed != null) {
       final optionalDataIsValid = (int.tryParse(optionalDataCheckDigitFixed) ==
-              MRZCheckDigitCalculator.getCheckDigit(optionalDataFixed)) ||
+              MrzCheckDigitCalculator.getCheckDigit(optionalDataFixed)) ||
           ((optionalDataCheckDigitFixed == '<') &&
               MrzFieldParser.parseOptionalData(optionalDataFixed).isEmpty);
 
@@ -134,7 +137,7 @@ class _TD3MrzFormatParser {
           '$optionalDataFixed${optionalDataCheckDigitFixed ?? ''}';
 
       final finalCheckStringIsValid = int.tryParse(finalCheckDigitFixed) ==
-          MRZCheckDigitCalculator.getCheckDigit(finalCheckStringFixed);
+          MrzCheckDigitCalculator.getCheckDigit(finalCheckStringFixed);
 
       if (!finalCheckStringIsValid) {
         throw const InvalidMrzValueException();

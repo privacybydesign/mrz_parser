@@ -1,7 +1,10 @@
-part of 'passport_mrz_parser.dart';
+import 'package:mrz_parser/mrz_parser.dart';
+import 'package:mrz_parser/src/mrz_checkdigit_calculator.dart';
+import 'package:mrz_parser/src/mrz_field_parser.dart';
+import 'package:mrz_parser/src/mrz_field_recognition_defects_fixer.dart';
 
-class _TD1MrzFormatParser {
-  _TD1MrzFormatParser._();
+class TD1MrzFormatParser {
+  TD1MrzFormatParser._();
 
   static const _linesLength = 30;
   static const _linesCount = 3;
@@ -95,20 +98,20 @@ class _TD1MrzFormatParser {
     final namesFixed = MrzFieldRecognitionDefectsFixer.fixNames(namesRaw);
 
     final documentNumberIsValid = int.tryParse(documentNumberCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(documentNumberFixed);
+        MrzCheckDigitCalculator.getCheckDigit(documentNumberFixed);
     if (!documentNumberIsValid) {
       throw const InvalidDocumentNumberException();
     }
 
     final birthDateIsValid = int.tryParse(birthDateCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(birthDateFixed);
+        MrzCheckDigitCalculator.getCheckDigit(birthDateFixed);
 
     if (!birthDateIsValid) {
       throw const InvalidBirthDateException();
     }
 
     final expiryDateIsValid = int.tryParse(expiryDateCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(expiryDateFixed);
+        MrzCheckDigitCalculator.getCheckDigit(expiryDateFixed);
 
     if (!expiryDateIsValid) {
       throw const InvalidExpiryDateException();
@@ -131,7 +134,7 @@ class _TD1MrzFormatParser {
         '$optionalData2Fixed';
 
     final finalCheckStringIsValid = int.tryParse(finalCheckDigitFixed) ==
-        MRZCheckDigitCalculator.getCheckDigit(finalCheckStringFixed);
+        MrzCheckDigitCalculator.getCheckDigit(finalCheckStringFixed);
 
     if (!finalCheckStringIsValid) {
       throw const InvalidMrzValueException();
