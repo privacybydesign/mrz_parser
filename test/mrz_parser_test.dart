@@ -719,6 +719,30 @@ void main() {
     );
   });
 
+  group('German ID card', () {
+    test(
+      'correct input parses',
+      () => expectResult(
+        input: [
+          'IDD<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
+          '1220001518D<<6408125<1110078<<<<<<<0',
+        ],
+        expectedOutput: MRZResult(
+          documentType: 'ID',
+          countryCode: 'D',
+          surnames: 'MUSTERMANN',
+          givenNames: 'ERIKA',
+          documentNumber: '122000151',
+          nationalityCountryCode: 'D',
+          birthDate: DateTime(1964, 08, 12),
+          sex: Sex.none,
+          expiryDate: DateTime(2011, 10, 07),
+          personalNumber: '',
+        ),
+      ),
+    );
+  });
+
   group('tryParse', () {
     test(
       'invalid input returns null',
