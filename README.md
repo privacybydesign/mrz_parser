@@ -5,11 +5,56 @@ Parse MRZ (Machine Readable Zone) from identity documents. Heavily
 inspired by [QKMRZParser](https://github.com/Mattijah/QKMRZParser).
 
 ### Supported formats:
-* TD1
-* TD2
-* TD3
-* MRV-A
-* MRV-B
+* TD1 - Machine Readable Official Travel Documents (3 lines × 30 characters)
+* TD2 - Machine Readable Official Travel Documents (2 lines × 36 characters)
+* TD3 - Machine Readable Passports (2 lines × 44 characters)
+* MRV-A - Machine Readable Visas Type A (2 lines × 44 characters)
+* MRV-B - Machine Readable Visas Type B (2 lines × 36 characters)
+
+### Format examples
+
+All formats follow the [ICAO Doc 9303](https://www.icao.int/publications/pages/publication.aspx?docnum=9303) standard for Machine Readable Travel Documents.
+
+#### TD1 (3 lines × 30 characters)
+Used for ID cards and similar sized documents. Defined in [ICAO Doc 9303, Part 5](https://www2023.icao.int/publications/Documents/9303_p5_cons_en.pdf).
+
+```
+I<UTOD231458907<<<<<<<<<<<<<<<
+7408122F1204159UTO<<<<<<<<<<<6
+ERIKSSON<<ANNA<MARIA<<<<<<<<<<
+```
+
+#### TD2 (2 lines × 36 characters)
+Used for ID cards and other official travel documents. Defined in [ICAO Doc 9303, Part 6](https://www2023.icao.int/publications/Documents/9303_p6_cons_en.pdf).
+
+```
+I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<
+D231458907UTO7408122F1204159<<<<<<<6
+```
+
+#### TD3 (2 lines × 44 characters)
+Used for passports. Defined in [ICAO Doc 9303, Part 4](https://www2023.icao.int/publications/Documents/9303_p4_cons_en.pdf).
+
+```
+P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<
+L898902C36UTO7408122F1204159ZE184226B<<<<<10
+```
+
+#### MRV-A (2 lines × 44 characters)
+Used for visa format A (full page). Defined in [ICAO Doc 9303, Part 7](https://www2023.icao.int/publications/Documents/9303_p7_cons_en.pdf).
+
+```
+V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<
+L898902C36UTO7408122F1204159ZE184226B<<<<<<
+```
+
+#### MRV-B (2 lines × 36 characters)
+Used for visa format B (sticker). Defined in [ICAO Doc 9303, Part 7](https://www2023.icao.int/publications/Documents/9303_p7_cons_en.pdf).
+
+```
+V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<
+L898902C36UTO7408122F12041596<<<<<<<
+```
 
 ## Usage
 

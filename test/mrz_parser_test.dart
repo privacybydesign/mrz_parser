@@ -722,12 +722,12 @@ void main() {
   group('German ID card', () {
     test(
       'correct input parses',
-      () => expectResult(
+      () => expectResultIdCard(
         input: [
           'IDD<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<',
           '1220001518D<<6408125<1110078<<<<<<<0',
         ],
-        expectedOutput: MRZResult(
+        expectedOutput: PassportMrzResult(
           documentType: 'ID',
           countryCode: 'D',
           surnames: 'MUSTERMANN',
