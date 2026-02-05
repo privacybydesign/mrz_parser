@@ -169,6 +169,30 @@ void main() {
       ),
     );
     test(
+      'ICAO 9303 Part 5 specimen',
+      () => expectResultIdCard(
+        input: [
+          'I<UTOD231458907<<<<<<<<<<<<<<<',
+          '7408122F1204159UTO<<<<<<<<<<<6',
+          'ERIKSSON<<ANNA<MARIA<<<<<<<<<<',
+        ],
+        expectedOutput: PassportMrzResult(
+          documentType: 'I',
+          countryCode: 'UTO',
+          surnames: 'ERIKSSON',
+          givenNames: 'ANNA MARIA',
+          documentNumber: 'D23145890',
+          nationalityCountryCode: 'UTO',
+          birthDate: DateTime(1974, 08, 12),
+          sex: Sex.female,
+          expiryDate: DateTime(2012, 04, 15),
+          personalNumber: '',
+          personalNumber2: '',
+        ),
+      ),
+    );
+
+    test(
       'correct input with long document number (Belgian ID card from PRADO)',
       () => expectResultIdCard(
         input: [
@@ -238,6 +262,28 @@ void main() {
   });
 
   group('TD2 passport', () {
+    test(
+      'ICAO 9303 Part 6 specimen',
+      () => expectResultTravelDocument(
+        input: [
+          'I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<',
+          'D231458907UTO7408122F1204159<<<<<<<6',
+        ],
+        expectedOutput: PassportMrzResult(
+          documentType: 'I',
+          countryCode: 'UTO',
+          surnames: 'ERIKSSON',
+          givenNames: 'ANNA MARIA',
+          documentNumber: 'D23145890',
+          nationalityCountryCode: 'UTO',
+          birthDate: DateTime(1974, 08, 12),
+          sex: Sex.female,
+          expiryDate: DateTime(2012, 04, 15),
+          personalNumber: '',
+        ),
+      ),
+    );
+
     test(
       'correct input parses, long document number',
       () => expectResultTravelDocument(
@@ -324,6 +370,28 @@ void main() {
   });
 
   group('MRV-B visa', () {
+    test(
+      'ICAO 9303 Part 7 specimen',
+      () => expectResultTravelDocument(
+        input: [
+          'V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<',
+          'L8988901C4XXX4009078F9612109<<<<<<<<',
+        ],
+        expectedOutput: PassportMrzResult(
+          documentType: 'V',
+          countryCode: 'UTO',
+          surnames: 'ERIKSSON',
+          givenNames: 'ANNA MARIA',
+          documentNumber: 'L8988901C',
+          nationalityCountryCode: 'XXX',
+          birthDate: DateTime(1940, 09, 07),
+          sex: Sex.female,
+          expiryDate: DateTime(1996, 12, 10),
+          personalNumber: '',
+        ),
+      ),
+    );
+
     test(
       'correct input parses',
       () => expectResultTravelDocument(
@@ -496,6 +564,28 @@ void main() {
   });
 
   group('MRV-A visa', () {
+    test(
+      'ICAO 9303 Part 7 specimen',
+      () => expectResultPassport(
+        input: [
+          'V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<',
+          'L8988901C4XXX4009078F96121096ZE184226B<<<<<<',
+        ],
+        expectedOutput: PassportMrzResult(
+          documentType: 'V',
+          countryCode: 'UTO',
+          surnames: 'ERIKSSON',
+          givenNames: 'ANNA MARIA',
+          documentNumber: 'L8988901C',
+          nationalityCountryCode: 'XXX',
+          birthDate: DateTime(1940, 09, 07),
+          sex: Sex.female,
+          expiryDate: DateTime(1996, 12, 10),
+          personalNumber: '6ZE184226B',
+        ),
+      ),
+    );
+
     test(
       'correct input parses',
       () => expectResultPassport(
