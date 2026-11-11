@@ -3,6 +3,7 @@ import 'package:mrz_parser/src/mrz_parser.dart';
 import 'package:mrz_parser/src/mrz_result.dart';
 import 'package:mrz_parser/src/mrz_string_extensions.dart';
 import 'package:mrz_parser/src/td1_format_mrz_parser.dart';
+import 'package:mrz_parser/src/td2_format_mrz_parser.dart';
 
 class IdCardMrzParser extends MrzParser<PassportMrzResult> {
   /// Parse [input] and return [PassportMrzResult] instance.
@@ -21,6 +22,10 @@ class IdCardMrzParser extends MrzParser<PassportMrzResult> {
 
     if (TD1MrzFormatParser.isValidInput(polishedInput)) {
       return TD1MrzFormatParser.parse(polishedInput);
+    }
+
+    if (TD2MrzFormatParser.isValidInput(polishedInput)) {
+      return TD2MrzFormatParser.parse(polishedInput);
     }
 
     throw const InvalidMrzInputException();
